@@ -1,112 +1,204 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="{{mix("css/app.css")}}">
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Welcome</title>
-</head>
-<body>
+@extends('layouts.landing')
 
-<body class="bg-white">
-<header>
-    <nav class="p-6">
-        <div class="flex justify-between items-center">
-            <h1 class="pr-6 border-r-2 text-2xl font-bold text-gray-500">Pix Auto</h1>
-            <div class="flex justify-between flex-grow">
-                @auth
+@section('page_title','Amber Auto')
+
+@section('content')
+
+    <section style="height: 75vh" class="h-3/4 px-10 py-32  flex items-end">
+        <h1 class="text-white text-7xl font-extrabold" style="font-family: 'Epilogue', sans-serif;">Amber Auto</h1>
+    </section>
 
 
-                    <div class="flex ml-6 font-light items-center">
-                        {{Auth::user()->name}}
-                    </div>
-                @else
-                    <div class="flex ml-6 font-light items-center">
-                        Welcome Guest
-                    </div>
+    <x-featured :featured="true">
 
 
-                @endauth
+        <x-slot name="carVideo">
+            <source src="public/media/R8.mp4" type="video/mp4"/>
+        </x-slot>
 
-                @auth
+        <x-slot name="carName">
+            Audi R8
+        </x-slot>
 
-                    <div class="md:flex space-x-6 hidden">
-                        <form method="post" action="{{route("Logout")}}">
+        <x-slot name="carYear">
+            2018
+        </x-slot>
+
+        <x-slot name="carColor">
+            White
+        </x-slot>
+
+        <x-slot name="carTransmission">
+            Auto
+        </x-slot>
+
+        <x-slot name="carDriverSide">
+            Right
+        </x-slot>
+
+        <x-slot name="carMileage">
+            {{number_format(5000)}}
+        </x-slot>
+
+        <x-slot name="carPrice">
+            {{number_format(2000000)}}
+        </x-slot>
+
+
+    </x-featured>
+
+
+    <section
+        class="p-5 flex justify-center w-full"
+        style="height: 60vh">
+
+        <div class="flex md:flex-row flex-col w-full gap-5 justify-around items-center">
+
+            <div class="w-full" x-data="{modal1: false}">
+                <x-action-cards modal="modal1" route="#" name="Add Brand"/>
+
+                <x-sidebar-modal title="Add Brand" alphName="modal1">
+
+                    <x-slot name="form">
+                        <form action="{{route('Brand.Store')}}" method="post"
+                              class="p-5 flex justify-between flex-col  h-full space-y-4 overflow-auto">
                             @csrf
-                            <button type="submit" class=" py-2 px-4 rounded bg-red-600 text-white text-md">Logout</button>
+                            <div>
+                                <x-sidebar-input title="Brand Name" name='brand_nm'/>
+                            </div>
+
+                            <div class=" flex  md:flex-row flex-col justify-around">
+                                <x-sidebar-input-btn modalCloseBtn="modal1"/>
+                            </div>
+
                         </form>
-                    </div>
+                    </x-slot>
 
-                @else
-
-                    <div class="md:flex space-x-6 hidden">
-                        <a href="{{route("Register")}}" class=" py-2 px-4 rounded bg-blue-700 text-white text-md">Sign up</a>
-                        <a href="{{route("Login")}}" class=" py-2 px-4 rounded bg-blue-700 text-white text-md">Login</a>
-                    </div>
-
-                @endauth
+                </x-sidebar-modal>
             </div>
+
+            <div class=" w-full" x-data="{modal2: false}">
+                <x-action-cards modal="modal2" route="#" name="Add Type"/>
+
+                <x-sidebar-modal title="Add Type" alphName="modal2">
+
+                    <x-slot name="form">
+                        <form action="{{route('Type.Store')}}" method="post"
+                              class="p-5 flex justify-between flex-col  h-full space-y-4 overflow-auto">
+                            @csrf
+                            <div>
+                                <x-sidebar-input title="Vehicle Type" name='vhcl_type_nm'/>
+
+                            </div>
+
+                            <div class=" flex  md:flex-row flex-col justify-around">
+                                <x-sidebar-input-btn modalCloseBtn="modal2"/>
+                            </div>
+
+                        </form>
+                    </x-slot>
+
+                </x-sidebar-modal>
+            </div>
+
+            <div class="md:w-1/3 w-full" x-data="{modal3: false}">
+                <x-action-cards route="#" modal="modal3" name="Add Model"/>
+
+                <x-sidebar-modal title="Add Model" alphName="modal3">
+
+                    <x-slot name="form">
+                        <form action="{{route('Model.Store')}}" method="post"
+                              class="p-5 flex justify-between flex-col  h-full space-y-4 overflow-auto">
+                            @csrf
+                            <div class="space-y-4">
+                                <x-sidebar-input title="Model Name" name='model_nm'/>
+                                <x-sidebar-input title="Vin Number" name='vin_nbr'/>
+
+                                <x-sidebar-input type="select" title="Driver Side" name='driver_side'>
+                                    <x-slot name="options">
+                                        <option disabled selected>Select Driver Side</option>
+                                        <option>Left</option>
+                                        <option>Right</option>
+                                    </x-slot>
+                                </x-sidebar-input>
+
+                                <x-sidebar-input type="number" title="Mileage" name='mileage'/>
+                                <x-sidebar-input title="Color" name='color'/>
+
+                                <x-sidebar-input type="select" title="Year" name='year'>
+                                    <x-slot name="options">
+                                        <option disabled selected>Select Vehicle Year</option>
+
+                                        @for ($i = \Carbon\Carbon::now('Jamaica')->year;  $i >= 1920 ; $i--)
+                                            <option>{{$i}}</option>
+                                        @endfor
+
+                                    </x-slot>
+                                </x-sidebar-input>
+
+                                <x-sidebar-input type="select" title="Brand" name='brand_id'>
+                                    <x-slot name="options">
+                                        <option disabled selected>Select Vehicle Brand</option>
+
+                                        @forelse ($brands as $brand)
+                                            <option value="{{$brand->vehicle_brand_id}}">{{$brand->brand_nm}}</option>
+                                        @empty
+                                            <option disabled selected>No Brands Available</option>
+                                        @endforelse
+
+                                    </x-slot>
+                                </x-sidebar-input>
+
+                                <x-sidebar-input type="select" title="Type" name='type_id'>
+                                    <x-slot name="options">
+                                        <option disabled selected>Select Vehicle Type</option>
+
+                                        @forelse ($types as $type)
+                                            <option
+                                                value="{{$type->vehicle_type_id}}">{{$type->vhcl_type_nm}}</option>
+                                        @empty
+                                            <option disabled selected>No Type Available</option>
+                                        @endforelse
+
+                                    </x-slot>
+                                </x-sidebar-input>
+
+                                <x-sidebar-input title="Price" name='price'/>
+                            </div>
+
+                            <div class=" flex  md:flex-row flex-col justify-around">
+                                <x-sidebar-input-btn modalCloseBtn="modal3"/>
+                            </div>
+
+                        </form>
+                    </x-slot>
+
+                </x-sidebar-modal>
+            </div>
+
         </div>
-    </nav>
-    <!-- Section Hero -->
-    <div class="container mx-auto bg-gray-400 h-72 rounded-md flex items-center">
-        <div class="sm:ml-20 text-gray-50 text-center sm:text-left">
-            <h1 class="text-5xl font-bold mb-4">
-                Pix Auto
-            </h1>
-            <p class="text-lg inline-block sm:block">Find the Car You Want, Your Way
-                Then, build your deal to fit your needs.</p>
-            <button class="mt-8 px-4 py-2 bg-gray-600 rounded">Browse All</button>
-        </div>
-    </div>
-</header>
 
-<main class="py-16 container mx-auto px-6 md:px-0">
-    <section>
-        <div class="grid sm:grid-cols-3 gap-4 grid-cols-2">
-            <div>
-                <div class="bg-gray-300 h-44"></div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">Vehicle Brands</h3>
-            </div>
-            <div>
-                <div class="bg-gray-300 h-44"></div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">Vehicle Models</h3>
-            </div>
-            <div>
-                <div class="bg-gray-300 h-44"></div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">Vehicle Type</h3>
-            </div>
-        </div>
-        <hr class="w-40 my-14 border-4 rounded-md sm:mx-0 mx-auto"/>
     </section>
-    <section>
-        <h1 class="inline-block text-gray-600 font-bold text-3xl">
-            The holy sauna ritual <br/>
-            (or how does Saunatime work).
-        </h1>
 
-        <div class="grid grid-cols-3 gap-4 mt-10">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">1. Browse and book</h3>
-                <p class="text text-gray-400">Start by searching for a location. Once you find a sauna you like, simply
-                    check the availability, book it, and make a secure payment right away.</p>
+    <section class="w-screen  p-20 justify-center items-center">
+
+
+        <div class="flex flex-col  ">
+            <div class="flex justify-center w-full">
+                <h1 class="text-7xl font-semibold text-white">Browse By Brand</h1>
             </div>
-            <div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">2. Have a great bath</h3>
-                <p class="text text-gray-400">Meet your host on the date you chose and enjoy the home sauna experience.
-                    We'll handle the payment to the host after your experience.</p>
-            </div>
-            <div>
-                <h3 class="text-lg font-semibold text-gray-500 mt-2">3. Review the host</h3>
-                <p class="text text-gray-400">If you enjoyed the experience, let others know by giving a review to your
-                    sauna host. This way others will know where to go.</p>
+
+            <div
+                class="p-20 mt-15 w-full  h-full grid items-center gap-20 text-center justify-center  grid-cols-3">
+                @forelse($brands as $brand)
+                    <x-brand-card :name="$brand->brand_nm"/>
+                @empty
+
+                @endforelse
+
             </div>
         </div>
+
     </section>
 
-</main>
-</body>
-</body>
-</html>
+@endsection

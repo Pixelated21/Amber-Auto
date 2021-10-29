@@ -21,7 +21,8 @@ class CreateVehicleModelsTable extends Migration
             $table->integer('mileage_amt');
             $table->string('color_val');
             $table->string('year_val');
-            $table->foreignId('vehicle_brand_id')->constrained('vehicle_brands','vehicle_brand_id');
+            $table->foreignId('vehicle_type_id')->constrained('vehicle_types', 'vehicle_type_id');
+            $table->foreignId('vehicle_brand_id')->constrained('vehicle_brands', 'vehicle_brand_id');
             $table->integer("cost_val");
             $table->timestamps();
         });
